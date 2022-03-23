@@ -3,13 +3,41 @@ local scratchpad = {}
 local api = vim.api
 local fn  = vim.fn
 
--- TODO: make toggle actually toggle
 -- TODO: auto-start on startup
 -- TODO: more transparent scratchpad text
 -- TODO: resize on window resize, auto enable and disable when multiple windows, too thin, etc
 -- TODO: virtual-text colourcolumn when active
 
+
+-- general entry-point
+function scratchpad.invoke(...)
+    local args = {...}
+
+    if #args == 0 or string.lower(args[1]) == 'toggle' then
+        scratchpad.toggle()
+    elseif string.lower(args[1]) == 'open' then
+        scratchpad.open()
+    elseif string.lower(args[1]) == 'close' then
+        scratchpad.close()
+    else
+        print("Invalid argument. Usage:\n \n    :ScratchPad [toggle|open|close]\n")
+    end
+end
+
+
+
 function scratchpad.toggle()
+    local count, _ = scratchpad.count()
+    if count == 0 then
+        scratchpad.open()
+    else
+        scratchpad.close()
+    end
+end
+
+
+-- open a scratchpad window
+function scratchpad.open()
     local main_win_id   = fn.win_getid()
     local main_win_info = fn.getwininfo(main_win_id)[1]
 
@@ -17,7 +45,7 @@ function scratchpad.toggle()
     local excess = width - 80 -- TODO: use a config variable
     local excess_left = math.floor(excess / 2)
 
-    --- create a buffer to the left of the current one, resize, and set a few options
+    -- create a buffer to the left of the current one, resize, and set a few options
     api.nvim_command('vsplit')
     api.nvim_win_set_width(0, excess_left)
     api.nvim_command('edit ~/.scratchpad') -- TODO: configurable by variable
@@ -28,11 +56,28 @@ function scratchpad.toggle()
     api.nvim_command('autocmd BufEnter <buffer> lua require"scratchpad".check_if_should_close()')
     api.nvim_buf_set_var(0, 'is_scratchpad', true)
 
-    --- set the cursor back to the main window
+    -- set the cursor back to the main window
     api.nvim_set_current_win(main_win_id)
 end
 
--- return number of scratchpads on current tab
+
+-- closes all scratchpads on current tab
+function scratchpad.close()
+    local tab_id = api.nvim_get_current_tabpage()
+    local windows = api.nvim_tabpage_list_wins(tab_id)
+
+    for _, win_id in ipairs(windows) do
+        local buffer_id = api.nvim_win_get_buf(win_id)
+
+        local is_scratchpad = fn.getbufvar(buffer_id, 'is_scratchpad')
+        if type(is_scratchpad) == 'boolean' and is_scratchpad then
+            api.nvim_win_close(win_id, false)
+        end
+    end
+end
+
+
+-- returns number of scratchpads on current tab
 function scratchpad.count()
     local tab_id = api.nvim_get_current_tabpage()
     local windows = api.nvim_tabpage_list_wins(tab_id)
@@ -50,9 +95,10 @@ function scratchpad.count()
     return scratchpad_count, #windows
 end
 
--- if all windows on the current tab are scratchpad windows, close the tab
-function scratchpad.check_if_should_close()
 
+-- autocommand, runs on entering a scratchpad buffer
+function scratchpad.check_if_should_close()
+    -- close if all windows on a tab are scratchpads
     local scratchpad_count, total_count = scratchpad.count()
 
     if scratchpad_count == total_count then
@@ -61,11 +107,5 @@ function scratchpad.check_if_should_close()
     end
 end
 
-function scratchpad.call(...)
-    local args = {...}
-    if #args == 0 then
-        scratchpad.toggle()
-    end
-end
 
 return scratchpad
