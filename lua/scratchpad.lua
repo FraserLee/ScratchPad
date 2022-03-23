@@ -4,7 +4,6 @@ local api = vim.api
 local fn  = vim.fn
 
 -- TODO: auto-start on startup
--- TODO: more transparent scratchpad text
 -- TODO: resize on window resize, auto enable and disable when multiple windows, too thin, etc
 -- TODO: virtual-text colourcolumn when active
 
@@ -41,19 +40,25 @@ function scratchpad.open()
     local main_win_id   = fn.win_getid()
     local main_win_info = fn.getwininfo(main_win_id)[1]
 
-    local width = main_win_info.width - main_win_info.textoff
-    local excess = width - 80 -- TODO: use a config variable
-    local excess_left = math.floor(excess / 2)
+    local win_width  = main_win_info.width
+    local win_text_width = win_width - main_win_info.textoff
+    local excess = win_text_width - 80 -- TODO: use a config variable for '80'
+    local excess_left = math.max(math.floor(excess / 2), 10)
 
     -- create a buffer to the left of the current one, resize, and set a few options
     api.nvim_command('vsplit')
     api.nvim_win_set_width(0, excess_left)
+    api.nvim_win_set_width(main_win_id, win_width - excess_left)
     api.nvim_command('edit ~/.scratchpad') -- TODO: configurable by variable
     api.nvim_command('setlocal autowrite')
     api.nvim_command('setlocal autowriteall')
     api.nvim_command('setlocal autoread')
     api.nvim_command('autocmd InsertLeave,TextChanged <buffer> :w')
     api.nvim_command('autocmd BufEnter <buffer> lua require"scratchpad".check_if_should_close()')
+    api.nvim_command('syn match Dim /.*/')
+    api.nvim_command('execute "hi Dim ctermfg=" . (g:scratchpad_fg)')
+    api.nvim_command('execute "hi Dim ctermbg=" . (g:scratchpad_bg)')
+
     api.nvim_buf_set_var(0, 'is_scratchpad', true)
 
     -- set the cursor back to the main window
