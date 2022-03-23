@@ -6,7 +6,8 @@ local fn  = vim.fn
 -- TODO: auto-start on startup
 -- TODO: resize on window resize, auto enable and disable when multiple windows, too thin, etc
 -- TODO: virtual-text colourcolumn when active
-
+-- TODO: write readme, documenation,
+-- TODO: record usage vid.
 
 -- general entry-point
 function scratchpad.invoke(...)
@@ -55,10 +56,7 @@ function scratchpad.open()
     api.nvim_command('setlocal autoread')
     api.nvim_command('autocmd InsertLeave,TextChanged <buffer> :w')
     api.nvim_command('autocmd BufEnter <buffer> lua require"scratchpad".check_if_should_close()')
-    api.nvim_command('syn match Dim /.*/')
-    api.nvim_command('execute "hi Dim ctermfg=" . (g:scratchpad_fg)')
-    api.nvim_command('execute "hi Dim ctermbg=" . (g:scratchpad_bg)')
-
+    api.nvim_command('syn match ScratchPad /.*/')
     api.nvim_buf_set_var(0, 'is_scratchpad', true)
 
     -- set the cursor back to the main window

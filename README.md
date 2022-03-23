@@ -10,8 +10,7 @@ nnoremap <leader>cc <cmd>ScratchPad<cr>
 - open: `:ScratchPad open`
 - close: `:ScratchPad close`
 
-set colour
+Edit colour with
 ```
-let g:scratchpad_fg = some colour
-let g:scratchpad_bg = another colour
+hi ScratchPad ctermfg=X ctermbg=Y
 ```
