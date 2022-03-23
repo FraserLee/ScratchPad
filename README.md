@@ -14,3 +14,10 @@ Edit colour with
 ```
 hi ScratchPad ctermfg=X ctermbg=Y
 ```
+
+Disable automatic resizing:
+
+```
+let g:auto_pad = v:false
+```
+
