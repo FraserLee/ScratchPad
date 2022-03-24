@@ -6,9 +6,13 @@ autocmd BufEnter,VimResized * if g:scratchpad_autosize | execute 'lua require("s
 autocmd VimEnter * if g:scratchpad_autostart | execute ':ScratchPad' | endif
 
 " defaults
-hi ScratchPad ctermfg=239
 let g:scratchpad_autosize = 1
 let g:scratchpad_autostart = 1
 
-" let g:scratchpad_textwidth = 80
-" let g:scratchpad_minwidth = 20
+let g:scratchpad_textwidth = 80
+let g:scratchpad_minwidth = 12
+
+let g:scratchpad_location = '~/.scratchpad'
+
+hi ScratchPad ctermfg=239
+

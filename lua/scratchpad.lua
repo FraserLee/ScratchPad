@@ -3,7 +3,6 @@ local M = { enabled = false }
 local api = vim.api
 local fn  = vim.fn
 
--- TODO: variables for 80, 10, scratchpad location
 -- TODO: virtual-text colourcolumn when active
 -- TODO: write readme, documenation,
 -- TODO: record usage vid.
@@ -81,13 +80,13 @@ local function set_size(non_scratchpad, scratchpad, keep_open)
     local total_text = total_width - win_info.textoff
 
     -- if the scratchpad is too thin, possibly close it
-    if total_text < 80 + 20 and not keep_open then -- TODO: use a config variable for '80', '20'
+    if total_text < vim.g.scratchpad_textwidth + 2 * vim.g.scratchpad_minwidth and not keep_open then
         M.close()
         return
     end
 
-    local excess = total_text - 80
-    local excess_left = math.max(math.floor(excess / 2), 10)
+    local excess = total_text - vim.g.scratchpad_textwidth
+    local excess_left = math.max(math.floor(excess / 2), vim.g.scratchpad_minwidth)
 
     api.nvim_win_set_width(scratchpad, excess_left)
     api.nvim_win_set_width(non_scratchpad, total_width - excess_left)
@@ -117,7 +116,7 @@ function M.open()
     M.enabled = false
 
     -- open a buffer to the left of the current one
-    api.nvim_command('vsplit ~/.scratchpad') -- TODO: configurable by variable
+    api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
     api.nvim_buf_set_var(0, 'is_scratchpad', true)
 
 
@@ -135,8 +134,6 @@ function M.open()
     api.nvim_command('setlocal noswapfile')
 
     -- set the filetype, syntax
-    api.nvim_command('autocmd BufEnter <buffer> setlocal filetype=scratchpad')
-    api.nvim_command('autocmd BufEnter <buffer> syntax match ScratchPad /.*/')
     api.nvim_command('setlocal filetype=scratchpad')
     api.nvim_command('syntax match ScratchPad /.*/')
 
@@ -194,7 +191,7 @@ function M.auto()
 
         local win_info = fn.getwininfo(api.nvim_get_current_win())[1]
         local win_text_width = win_info.width - win_info.textoff
-        if win_text_width > 80 + 20 then
+        if win_text_width > vim.g.scratchpad_textwidth + 2 * vim.g.scratchpad_minwidth then
             M.open()
         end
     end
