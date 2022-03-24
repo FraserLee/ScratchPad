@@ -1,4 +1,4 @@
-local M = { enabled = true }
+local M = { enabled = false }
 
 local api = vim.api
 local fn  = vim.fn
@@ -112,12 +112,14 @@ end
 
 -- open a scratchpad window
 function M.open()
-    local main_win_id   = fn.win_getid()
+    local main_win_id = fn.win_getid()
+    local en_cache = M.enabled
+    M.enabled = false
 
     -- open a buffer to the left of the current one
-    api.nvim_command('vsplit')
-    api.nvim_command('edit! ~/.scratchpad') -- TODO: configurable by variable
+    api.nvim_command('vsplit ~/.scratchpad') -- TODO: configurable by variable
     api.nvim_buf_set_var(0, 'is_scratchpad', true)
+
 
     -- set the window sizes
     set_size(main_win_id, fn.win_getid(), true)
@@ -140,13 +142,16 @@ function M.open()
 
     -- set the cursor back to the main window
     api.nvim_set_current_win(main_win_id)
+    M.enabled = en_cache
 end
 
 
 -- close all scratchpads on current tab
 function M.close()
     for _, win_id in ipairs(windows()) do
-        if is_scratchpad(win_id) then api.nvim_win_close(win_id, false) end
+        if is_scratchpad(win_id) then
+            api.nvim_win_close(win_id, false)
+        end
     end
 end
 
