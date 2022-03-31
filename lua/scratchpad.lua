@@ -3,7 +3,6 @@ local M = { enabled = false }
 local api = vim.api
 local fn  = vim.fn
 
--- TODO: virtual-text colourcolumn when active
 -- TODO: write readme, documenation,
 -- TODO: record usage vid.
 
@@ -136,6 +135,12 @@ function M.open()
     -- set the filetype, syntax
     api.nvim_command('setlocal filetype=scratchpad')
     api.nvim_command('syntax match ScratchPad /.*/')
+
+    -- disable virtual-text colour-column in scratchpad if lukas-reineke/virt-column.nvim is loaded
+    local hasVC, VC = pcall(require,'virt-column')
+    if hasVC then
+        VC.buffer_config[vim.api.nvim_get_current_buf()] = {char = ' ', virtcolumn = '' }
+    end
 
     -- set the cursor back to the main window
     api.nvim_set_current_win(main_win_id)
