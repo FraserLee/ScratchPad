@@ -3,8 +3,6 @@ local M = { enabled = false }
 local api = vim.api
 local fn  = vim.fn
 
--- TODO: write readme, documenation,
--- TODO: record usage vid.
 
 -- general module entry-point
 function M.invoke(...)
