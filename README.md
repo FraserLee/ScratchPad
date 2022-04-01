@@ -1,48 +1,139 @@
-# scratchpad (wip)
+# ScratchPad
 
-Currently in the works. Come back later.
+A snazzy neovim plugin to centre your buffer by creating a persistent
+scratchpad off to the left.
+
+
+## Installation
+
+If you're reading this you've probably already got a plugin manager. If not, I
+recommend [Vim-Plug](https://github.com/junegunn/vim-plug) but they're essentially
+interchangeable. Add the appropriate line in the appropriate spot in your
+`.vimrc` file.
+
+```vim
+" vim-plug
+Plug 'FraserLee/ScratchPad'
+
+" vundle
+Plugin 'FraserLee/ScratchPad'
+
+" packer.nvim
+use 'FraserLee/ScratchPad'
+
+" etc...
+```
+
+Run your version of `:PlugInstall` and things should be good to go.
+
+
+## Usage
 
 ```
 nnoremap <leader>cc <cmd>ScratchPad<cr>
 ```
-
 ---
 
-- toggle: `:ScratchPad`
-- open: `:ScratchPad open`
-- close: `:ScratchPad close`
+By default, all scratchpad windows point to one underlying file
+(`~/.scratchpad` unless changed). They'll automatically save whenever modified,
+and update if the file is changed - automatically closing when all other
+windows are gone.
 
-Edit colour with
+I tend to use them as the digital equivalent of the sticky notes that coat
+all objects vaguely proximate to my desk, but that's not a requirement.
 
-```
-hi ScratchPad ctermfg=X ctermbg=Y
-```
+- `:ScratchPad` to toggle the scratchpad
+- `:ScratchPad open` opens a new scratchpad
+- `:ScratchPad close` closes all scratchpads in the current tab
 
-### Text Properties
 
-The assumed width of code, what will be centred on screen. Set this to the same thing as any sort of colour column.
-```
-let g:scratchpad_textwidth = 80
-```
+## Configuration
 
-The minimum width of a ScratchPad before it will try to close itself.
-```
-let g:scratchpad_minwidth = 12
-```
+By default, the scratchpad will auto-open when you open vim, and automatically
+open / close / resize itself with a changing window.
 
-The path of the scratchpad
-```
-let g:scratchpad_location = '~/.scratchpad'
-```
 
----
+Disable scratchpad on startup:
+```
+let g:scratchpad_autostart = 0
+```
 
 Disable automatic resizing:
 ```
 let g:scratchpad_autosize = 0
 ```
 
-Disable scratchpad on startup:
+
+### Automatic Size Junk
+
+The assumed width of code, as per what will be centred on screen. Set this to the same
+thing as any sort of colour column.
+
 ```
-let g:scratchpad_autostart = 0
+let g:scratchpad_textwidth = 80 " (80 is the default)
 ```
+
+The minimum width of a ScratchPad before it will - if autosize is enabled -
+close itself.
+
+```
+let g:scratchpad_minwidth = 12
+```
+
+---
+
+Edit colour with
+```
+hi ScratchPad ctermfg=X ctermbg=Y
+```
+
+Change the scratchpad file by
+```
+let g:scratchpad_location = '~/.scratchpad'
+```
+
+
+# Making Stuff Look (somewhat) Decent
+
+I've added a line to disable the 
+[virtual-text colour column](https://github.com/lukas-reineke/virt-column.nvim)
+in scratchpad buffers if that plugin's found, since I think these two pair
+pretty well together. If you want to get something looking similar to the
+screenshots, here's a start.
+
+```
+call plug#begin('~/.vim/plugged')
+Plug 'morhetz/gruvbox'
+Plug 'fraserlee/ScratchPad'
+Plug 'lukas-reineke/virt-column.nvim'
+call plug#end()
+
+" ------------------------------ SETUP ---------------------------------------
+
+se nu             " Turn on line numbers
+se colorcolumn=80 " Set the colour-column to 80
+
+noremap <SPACE> <Nop>
+let mapleader=" "
+
+" <space>cc to toggle ScratchPad
+nnoremap <leader>cc <cmd>ScratchPad<cr>
+
+lua << EOF
+    require('virt-column').setup{ char = '|' }
+EOF
+
+" -------------------------- COLOUR SCHEME -----------------------------------
+
+colorscheme gruvbox 
+let g:gruvbox_contrast_dark = 'hard'
+se background=dark
+
+" Set the colourcolumn background to the background colour, 
+" foreground to the same as the window split colour
+
+execute "hi ColorColumn ctermbg=" . 
+            \matchstr(execute('hi Normal'), 'ctermbg=\zs\S*')
+hi! link VirtColumn VertSplit
+```
+
