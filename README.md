@@ -139,6 +139,5 @@ execute "hi ColorColumn ctermbg=" .
 hi! link VirtColumn VertSplit
 ```
 
-![1](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot%20small%202.png)
-![2](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot.png)
-![3](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot%20small.png)
+![1](https://raw.githubusercontent.com/FraserLee/ScratchPad/main/screenshots/screenshot%201.png)
+![2](https://raw.githubusercontent.com/FraserLee/ScratchPad/main/screenshots/screenshot%202.png)
