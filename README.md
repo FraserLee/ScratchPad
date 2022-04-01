@@ -3,11 +3,13 @@
 A snazzy neovim plugin to centre your buffer by creating a persistent
 scratchpad off to the left.
 
+![scratchpad-vid](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/resize.gif)
 
-## Installation
+<br><br>
+# Installation
 
 If you're reading this you've probably already got a plugin manager. If not, I
-recommend [Vim-Plug](https://github.com/junegunn/vim-plug) but they're essentially
+recommend [Vim-Plug](https://github.com/junegunn/vim-plug), but they're essentially
 interchangeable. Add the appropriate line in the appropriate spot in your
 `.vimrc` file.
 
@@ -26,17 +28,17 @@ use 'FraserLee/ScratchPad'
 
 Run your version of `:PlugInstall` and things should be good to go.
 
+<br><br><br><br>
+# Usage
 
-## Usage
-
-```
+```vim
 nnoremap <leader>cc <cmd>ScratchPad<cr>
 ```
 ---
 
 By default, all scratchpad windows point to one underlying file
-(`~/.scratchpad` unless changed). They'll automatically save whenever modified,
-and update if the file is changed - automatically closing when all other
+(`~/.scratchpad` unless changed). They'll auto-save when modified,
+reload if the file is changed, and automatically close when all other
 windows are gone.
 
 I tend to use them as the digital equivalent of the sticky notes that coat
@@ -46,20 +48,20 @@ all objects vaguely proximate to my desk, but that's not a requirement.
 - `:ScratchPad open` opens a new scratchpad
 - `:ScratchPad close` closes all scratchpads in the current tab
 
-
-## Configuration
+<br><br><br><br>
+# Configuration
 
 By default, the scratchpad will auto-open when you open vim, and automatically
-open / close / resize itself with a changing window.
+open / close / resize itself as the window size (and spilt) changes.
 
 
 Disable scratchpad on startup:
-```
+```vim
 let g:scratchpad_autostart = 0
 ```
 
 Disable automatic resizing:
-```
+```vim
 let g:scratchpad_autosize = 0
 ```
 
@@ -69,30 +71,30 @@ let g:scratchpad_autosize = 0
 The assumed width of code, as per what will be centred on screen. Set this to the same
 thing as any sort of colour column.
 
-```
+```vim
 let g:scratchpad_textwidth = 80 " (80 is the default)
 ```
 
 The minimum width of a ScratchPad before it will - if autosize is enabled -
 close itself.
 
-```
+```vim
 let g:scratchpad_minwidth = 12
 ```
 
 ---
 
 Edit colour with
-```
+```vim
 hi ScratchPad ctermfg=X ctermbg=Y
 ```
 
 Change the scratchpad file by
-```
+```vim
 let g:scratchpad_location = '~/.scratchpad'
 ```
 
-
+<br><br><br><br>
 # Making Stuff Look (somewhat) Decent
 
 I've added a line to disable the 
@@ -101,7 +103,7 @@ in scratchpad buffers if that plugin's found, since I think these two pair
 pretty well together. If you want to get something looking similar to the
 screenshots, here's a start.
 
-```
+```vim
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
 Plug 'fraserlee/ScratchPad'
@@ -137,3 +139,6 @@ execute "hi ColorColumn ctermbg=" .
 hi! link VirtColumn VertSplit
 ```
 
+![1](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot%20small%202.png)
+![2](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot.png)
+![3](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/screenshot%20small.png)
