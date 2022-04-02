@@ -14,5 +14,9 @@ let g:scratchpad_minwidth = 12
 
 let g:scratchpad_location = '~/.scratchpad'
 
+let g:scratchpad_daily = 0
+let g:scratchpad_daily_location = '~/.daily_scratchpad'
+let g:scratchpad_daily_format = '%Y-%m-%d'
+
 hi ScratchPad ctermfg=239
 
