@@ -82,12 +82,7 @@ close itself.
 let g:scratchpad_minwidth = 12
 ```
 
----
-
-Edit colour with
-```vim
-hi ScratchPad ctermfg=X ctermbg=Y
-```
+## File Locations
 
 Change the scratchpad file by
 ```vim
@@ -96,7 +91,7 @@ let g:scratchpad_location = '~/.scratchpad'
 
 ### Daily ScratchPad
 Instead of having one ScratchPad have a fresh one for each day. 
-The old ScratchPads are saved as well. This is disabled by default.
+The old ScratchPads are saved as well. Disabled by default.
 
 Enable daily scratchpad
 ```vim
@@ -111,6 +106,13 @@ let g:scratchpad_daily_location = '~/.daily_scratchpad'
 Change the daily scratchpad file name format using [lua os date](https://www.lua.org/pil/22.1.html)
 ```vim
 let g:scratchpad_daily_format = '%Y-%m-%d'
+```
+
+---
+
+Edit colour with
+```vim
+hi ScratchPad ctermfg=X ctermbg=Y
 ```
 
 
