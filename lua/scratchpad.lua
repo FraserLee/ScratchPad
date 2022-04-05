@@ -26,9 +26,8 @@ end
 
 -- check if a window is a scratchpad, win_id = 0 -> current window
 local function is_scratchpad(win_id)
-    local buf_id = api.nvim_win_get_buf(win_id)
-    local buf_var = fn.getbufvar(buf_id, 'is_scratchpad')
-    return type(buf_var) == 'boolean' and buf_var
+    local win_var = fn.getwinvar(win_id, 'is_scratchpad')
+    return type(win_var) == 'boolean' and win_var
 end
 
 
@@ -122,7 +121,7 @@ function M.open()
     else
         api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
     end
-    api.nvim_buf_set_var(0, 'is_scratchpad', true)
+    api.nvim_win_set_var(0, 'is_scratchpad', true)
 
     if split_cach then api.nvim_command('set splitright') end
 
