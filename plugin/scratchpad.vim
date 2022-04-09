@@ -4,6 +4,7 @@ command! -nargs=* ScratchPad lua require('scratchpad').invoke(<f-args>)
 " defaults
 let g:scratchpad_autosize = get(g:, 'scratchpad_autosize', 1)
 let g:scratchpad_autostart = get(g:, 'scratchpad_autostart', 1)
+let g:scratchpad_autofocus = get(g:, 'scratchpad_autofocus', 0)
 
 let g:scratchpad_textwidth = get(g:, 'scratchpad_textwidth', 80)
 let g:scratchpad_minwidth = get(g:, 'scratchpad_minwidth', 12)
@@ -19,4 +20,3 @@ autocmd BufEnter,VimResized * if g:scratchpad_autosize | execute 'lua require("s
 autocmd VimEnter * if g:scratchpad_autostart | execute ':ScratchPad' | endif
 
 hi ScratchPad ctermfg=239
-

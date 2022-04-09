@@ -2,6 +2,7 @@ local M = { enabled = false }
 
 local api = vim.api
 local fn  = vim.fn
+local g = vim.g
 
 
 -- general module entry-point
@@ -121,7 +122,9 @@ function M.open()
     else
         api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
     end
+
     api.nvim_win_set_var(0, 'is_scratchpad', true)
+    g.__scratch_bufnr = api.nvim_get_current_buf()
 
     if split_cache then api.nvim_command('set splitright') end
 
@@ -149,7 +152,11 @@ function M.open()
     end
 
     -- set the cursor back to the main window
-    api.nvim_set_current_win(main_win_id)
+    if g.scratchpad_autofocus ~= 1 then
+        -- set the cursor back to the main window
+        api.nvim_set_current_win(main_win_id)
+    end
+
     M.enabled = en_cache
 end
 
@@ -159,6 +166,17 @@ function M.close()
     for _, win_id in ipairs(windows()) do
         if is_scratchpad(win_id) then
             api.nvim_win_close(win_id, false)
+
+            local alter_bufnr = fn.bufnr("#")
+            local cur_bufnr = api.nvim_get_current_buf()
+
+            -- Close the buffer as well
+            -- It is still accessible through `:bnext`, `:bprev`
+            if alter_bufnr == g.__scratch_bufnr and alter_bufnr ~= cur_bufnr then
+                api.nvim_command(("bd %d"):format(g.__scratch_bufnr))
+            end
+
+            g.__scratch_bufnr = nil
         end
     end
 end
