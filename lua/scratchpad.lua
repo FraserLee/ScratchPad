@@ -1,8 +1,7 @@
 local M = { enabled = false }
 
 local api = vim.api
-local fn  = vim.fn
-local g = vim.g
+local fn = vim.fn
 
 
 -- general module entry-point
@@ -34,7 +33,7 @@ end
 
 -- returns a list of all windows open on the current tab
 local function windows()
-    local tab_id  = api.nvim_get_current_tabpage()
+    local tab_id = api.nvim_get_current_tabpage()
     return api.nvim_tabpage_list_wins(tab_id)
 end
 
@@ -118,13 +117,13 @@ function M.open()
 
     -- open a buffer to the left of the current one
     if vim.g.scratchpad_daily == 1 then
-        api.nvim_command('vsplit ' .. vim.g.scratchpad_daily_location .. '/' .. os.date(vim.g.scratchpad_daily_format))
+        api.nvim_command( 'vsplit ' .. vim.g.scratchpad_daily_location ..
+                            '/' .. os.date(vim.g.scratchpad_daily_format))
     else
         api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
     end
 
     api.nvim_win_set_var(0, 'is_scratchpad', true)
-    g.__scratch_bufnr = api.nvim_get_current_buf()
 
     if split_cache then api.nvim_command('set splitright') end
 
@@ -146,13 +145,15 @@ function M.open()
     api.nvim_command('syntax match ScratchPad /.*/')
 
     -- disable virtual-text colour-column in scratchpad if lukas-reineke/virt-column.nvim is loaded
-    local hasVC, VC = pcall(require,'virt-column')
+    local hasVC, VC = pcall(require, 'virt-column')
     if hasVC then
-        VC.buffer_config[vim.api.nvim_get_current_buf()] = {char = ' ', virtcolumn = '' }
+        VC.buffer_config[vim.api.nvim_get_current_buf()] = {
+            char = ' ',
+            virtcolumn = '',
+        }
     end
 
-    -- set the cursor back to the main window
-    if g.scratchpad_autofocus ~= 1 then
+    if vim.g.scratchpad_autofocus ~= 1 then
         -- set the cursor back to the main window
         api.nvim_set_current_win(main_win_id)
     end
@@ -160,23 +161,16 @@ function M.open()
     M.enabled = en_cache
 end
 
-
 -- close all scratchpads on current tab
 function M.close()
     for _, win_id in ipairs(windows()) do
         if is_scratchpad(win_id) then
+            local buf_id = api.nvim_win_get_buf(win_id)
+            -- close the window
             api.nvim_win_close(win_id, false)
-
-            local alter_bufnr = fn.bufnr("#")
-            local cur_bufnr = api.nvim_get_current_buf()
-
-            -- Close the buffer as well
-            -- It is still accessible through `:bnext`, `:bprev`
-            if alter_bufnr == g.__scratch_bufnr and alter_bufnr ~= cur_bufnr then
-                api.nvim_command(("bd %d"):format(g.__scratch_bufnr))
-            end
-
-            g.__scratch_bufnr = nil
+            -- also close the underlying buffer
+            -- (still accessible through `:bnext`, `:bprev`)
+            api.nvim_command('bdelete ' .. buf_id)
         end
     end
 end
