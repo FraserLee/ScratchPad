@@ -65,12 +65,6 @@ Disable automatic resizing:
 let g:scratchpad_autosize = 0
 ```
 
-Autofocus the scratchpad window:
-```vim
-let g:scratchpad_autofocus = 0
-```
-
-
 ### Automatic Size Junk
 
 The assumed width of code, as per what will be centred on screen. Set this to the same
@@ -92,6 +86,11 @@ let g:scratchpad_minwidth = 12
 Change the scratchpad file by
 ```vim
 let g:scratchpad_location = '~/.scratchpad'
+```
+
+Auto-focus when opening a scratchpad window:
+```vim
+let g:scratchpad_autofocus = 1
 ```
 
 ### Daily ScratchPad
