@@ -65,6 +65,11 @@ Disable automatic resizing:
 let g:scratchpad_autosize = 0
 ```
 
+Autofocus the scratchpad window:
+```vim
+let g:scratchpad_autofocus = 0
+```
+
 
 ### Automatic Size Junk
 
@@ -90,7 +95,7 @@ let g:scratchpad_location = '~/.scratchpad'
 ```
 
 ### Daily ScratchPad
-Instead of having one ScratchPad have a fresh one for each day. 
+Instead of having one ScratchPad have a fresh one for each day.
 The old ScratchPads are saved as well. Disabled by default.
 
 Enable daily scratchpad
@@ -119,7 +124,7 @@ hi ScratchPad ctermfg=X ctermbg=Y
 <br><br><br><br>
 # Making Stuff Look (somewhat) Decent
 
-I've added a line to disable the 
+I've added a line to disable the
 [virtual-text colour column](https://github.com/lukas-reineke/virt-column.nvim)
 in scratchpad buffers if that plugin's found, since I think these two pair
 pretty well together. If you want to get something looking similar to the
@@ -149,14 +154,14 @@ EOF
 
 " -------------------------- COLOUR SCHEME -----------------------------------
 
-colorscheme gruvbox 
+colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 se background=dark
 
-" Set the colourcolumn background to the background colour, 
+" Set the colourcolumn background to the background colour,
 " foreground to the same as the window split colour
 
-execute "hi ColorColumn ctermbg=" . 
+execute "hi ColorColumn ctermbg=" .
             \matchstr(execute('hi Normal'), 'ctermbg=\zs\S*')
 hi! link VirtColumn VertSplit
 ```
