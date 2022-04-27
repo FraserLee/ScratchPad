@@ -12,7 +12,7 @@ let g:scratchpad_minwidth = get(g:, 'scratchpad_minwidth', 12)
 let g:scratchpad_location = get(g:, 'scratchpad_location', '~/.scratchpad')
 
 let g:scratchpad_daily = get(g:, 'scratchpad_daily', 0)
-let g:scratchpad_daily_location = get(g:, 'scratchpad_daily', '~/.daily_scratchpad')
+let g:scratchpad_daily_location = get(g:, 'scratchpad_daily_location', '~/.daily_scratchpad')
 let g:scratchpad_daily_format = get(g:, 'scratchpad_daily_format', '%Y-%m-%d')
 
 " setup auto-resize, auto-start commands
