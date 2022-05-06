@@ -118,10 +118,10 @@ function M.open()
 
     -- open a buffer to the left of the current one
     if vim.g.scratchpad_daily == 1 then
-        api.nvim_command( 'vsplit ' .. vim.g.scratchpad_daily_location ..
+        api.nvim_command( 'topleft vsplit ' .. vim.g.scratchpad_daily_location ..
                             '/' .. os.date(vim.g.scratchpad_daily_format))
     else
-        api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
+        api.nvim_command('topleft vsplit ' .. vim.g.scratchpad_location)
     end
 
     api.nvim_win_set_var(0, 'is_scratchpad', true)
