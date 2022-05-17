@@ -1,4 +1,4 @@
-local M = { enabled = false }
+local M = { enabled = false, prev_win = 0 }
 
 local api = vim.api
 local fn = vim.fn
@@ -108,6 +108,7 @@ end
 -- open a scratchpad window
 function M.open()
     local main_win_id = fn.win_getid()
+    M.prev_win = main_win_id
     local en_cache = M.enabled
     M.enabled = false
 
@@ -117,10 +118,10 @@ function M.open()
 
     -- open a buffer to the left of the current one
     if vim.g.scratchpad_daily == 1 then
-        api.nvim_command( 'vsplit ' .. vim.g.scratchpad_daily_location ..
+        api.nvim_command( 'topleft vsplit ' .. vim.g.scratchpad_daily_location ..
                             '/' .. os.date(vim.g.scratchpad_daily_format))
     else
-        api.nvim_command('vsplit ' .. vim.g.scratchpad_location)
+        api.nvim_command('topleft vsplit ' .. vim.g.scratchpad_location)
     end
 
     api.nvim_win_set_var(0, 'is_scratchpad', true)
@@ -164,6 +165,7 @@ end
 -- close all scratchpads on current tab
 function M.close()
     for _, win_id in ipairs(windows()) do
+        if win_id == M.prev_win then api.nvim_set_current_win(M.prev_win) end
         if is_scratchpad(win_id) then
             local buf_id = api.nvim_win_get_buf(win_id)
             -- close the window
@@ -199,6 +201,7 @@ function M.auto()
         return
     end
 
+    M.prev_win = fn.win_getid()
 
     if s_count > 1 then -- more than one scratchpad -> close and re-open
 
