@@ -112,11 +112,7 @@ function M.open()
     local en_cache = M.enabled
     M.enabled = false
 
-    -- cache splitright setting and reset it to open scratchpad on the left
-    local split_cache = api.nvim_get_option('splitright')
-    api.nvim_command('set nosplitright')
-
-    -- open a buffer to the left of the current one
+    -- open a buffer on the far-left of the window
     if vim.g.scratchpad_daily == 1 then
         api.nvim_command( 'topleft vsplit ' .. vim.g.scratchpad_daily_location ..
                             '/' .. os.date(vim.g.scratchpad_daily_format))
@@ -125,8 +121,6 @@ function M.open()
     end
 
     api.nvim_win_set_var(0, 'is_scratchpad', true)
-
-    if split_cache then api.nvim_command('set splitright') end
 
     -- set the window sizes
     set_size(main_win_id, fn.win_getid(), true)
