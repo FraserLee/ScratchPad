@@ -55,6 +55,7 @@ local function partition()
     return scratchpads, non_scratchpads
 end
 
+
 -- returns number of (scratchpads, non-scratchpads) on current tab
 local function count()
     local c = 0
@@ -67,10 +68,48 @@ local function count()
 end
 
 
+-- returns the number of distinct vertical lines of windows - window stacks are counted as one
+local function splits()
+
+    -- (note: mildly naïve behaviour in the case in a 2x2 split, vsplit major, with the hsplits misaligned)
+    local win_columns = {}
+    local split_count = 0
+
+    for _, win_id in ipairs(windows()) do
+        if not is_scratchpad(win_id) then
+            local _, col = unpack(api.nvim_win_get_position(win_id))
+            if not win_columns[col] then
+                win_columns[col] = true
+                split_count = split_count + 1
+            end
+        end
+    end
+
+    return split_count
+end
+
+
 -- given a scratchpad and a non-scratchpad, set sizes so the non-scratchpad is
 -- centred with reference to the box of the two. If keep_open is false, the
 -- scratchpad might be closed if things are too tight.
 local function set_size(non_scratchpad, scratchpad, keep_open)
+
+    if non_scratchpad == nil then -- no non-scratchpad passed -> find the widest one and use that
+        local _, non_scratchpads = partition()
+        local widest = non_scratchpads[1]
+        local width = fn.getwininfo(widest)[1].width
+
+        for _, win_id in ipairs(non_scratchpads) do
+            local c_width = fn.getwininfo(win_id)[1].width
+            if c_width > width then
+                width = c_width
+                widest = win_id
+            end
+        end
+        non_scratchpad = widest
+    end
+
+
     local win_info = fn.getwininfo(non_scratchpad)[1]
     local total_width = win_info.width + fn.getwininfo(scratchpad)[1].width
     local total_text = total_width - win_info.textoff
@@ -112,18 +151,27 @@ function M.open()
     local en_cache = M.enabled
     M.enabled = false
 
-    -- open a buffer on the far-left of the window
+    -- open a buffer. No existing scratchpads -> open at far-left of window, otherwise auto-place
+    local n_scratchpads, _ = count()
+    local prefix = ''
+    if n_scratchpads == 0 then prefix = 'topleft ' end
+
+    local location = vim.g.scratchpad_location
     if vim.g.scratchpad_daily == 1 then
-        api.nvim_command( 'topleft vsplit ' .. vim.g.scratchpad_daily_location ..
-                            '/' .. os.date(vim.g.scratchpad_daily_format))
-    else
-        api.nvim_command('topleft vsplit ' .. vim.g.scratchpad_location)
+        location = vim.g.scratchpad_daily_location .. '/'
+            .. os.date(vim.g.scratchpad_daily_format)
     end
+
+    api.nvim_command(prefix .. 'vsplit ' .. location)
 
     api.nvim_win_set_var(0, 'is_scratchpad', true)
 
     -- set the window sizes
-    set_size(main_win_id, fn.win_getid(), true)
+    if n_scratchpads == 0 then
+        set_size(nil, fn.win_getid(), true)
+    else
+        set_size(main_win_id, fn.win_getid(), true)
+    end
 
     -- setup the autocommand that will close the scratchpad
     api.nvim_command('autocmd BufEnter <buffer> lua require"scratchpad".check_if_should_close()')
@@ -142,7 +190,7 @@ function M.open()
     -- disable virtual-text colour-column in scratchpad if lukas-reineke/virt-column.nvim is loaded
     local hasVC, VC = pcall(require, 'virt-column')
     if hasVC then
-        VC.buffer_config[vim.api.nvim_get_current_buf()] = {
+        VC.buffer_config[api.nvim_get_current_buf()] = {
             char = ' ',
             virtcolumn = '',
         }
@@ -188,9 +236,10 @@ function M.auto()
     -- if we're disabled, or currently in a scratchpad, do nothing
     if not M.enabled or is_scratchpad(0) then return end
 
-    local s_count, non_s_count = count()
+    local s_count, _ = count()
 
-    if non_s_count ~= 1 then -- more than one window -> disable scratchpads (possibly tweak this?)
+    print(splits())
+    if splits() > 1 then -- more than one vertical split -> close scratchpad
         if s_count > 0 then M.close() end
         return
     end
@@ -202,10 +251,10 @@ function M.auto()
         M.close()
         M.open()
 
-    elseif s_count == 1 then -- one scratchpad -> resize it
+    elseif s_count == 1 then -- one scratchpad -> resize it (with respect to the widest non-scratchpad)
 
-        local scratchpads, non_scratchpads = partition()
-        set_size(non_scratchpads[1], scratchpads[1], false)
+        local scratchpads, _ = partition()
+        set_size(nil, scratchpads[1], false)
 
     else -- no scratchpads -> open one if there's enough space
 
