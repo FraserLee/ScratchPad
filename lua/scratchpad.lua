@@ -238,7 +238,6 @@ function M.auto()
 
     local s_count, _ = count()
 
-    print(splits())
     if splits() > 1 then -- more than one vertical split -> close scratchpad
         if s_count > 0 then M.close() end
         return
