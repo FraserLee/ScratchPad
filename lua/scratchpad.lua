@@ -31,10 +31,25 @@ local function is_scratchpad(win_id)
 end
 
 
--- returns a list of all windows open on the current tab
+-- returns a list of all (non-floating) windows open on the current tab
 local function windows()
+
     local tab_id = api.nvim_get_current_tabpage()
-    return api.nvim_tabpage_list_wins(tab_id)
+    local win_ids = api.nvim_tabpage_list_wins(tab_id)
+
+    local solid_win_ids = {}
+
+    for _, win_id in ipairs(win_ids) do
+
+        -- ignore floating windows, check `:h api-floatwin` to see where this
+        -- line is from
+
+        if vim.api.nvim_win_get_config(win_id).relative == '' then
+            table.insert(solid_win_ids, win_id)
+        end
+    end
+
+    return solid_win_ids
 end
 
 
