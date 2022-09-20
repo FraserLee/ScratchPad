@@ -19,4 +19,4 @@ let g:scratchpad_daily_format = get(g:, 'scratchpad_daily_format', '%Y-%m-%d')
 autocmd BufEnter,VimResized * if g:scratchpad_autosize | execute 'lua require("scratchpad").auto()' | endif
 autocmd VimEnter * if g:scratchpad_autostart | execute ':ScratchPad' | endif
 
-hi ScratchPad ctermfg=239
+hi ScratchPad ctermfg=239 guifg=#4e4e4e
