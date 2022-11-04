@@ -232,6 +232,7 @@ function M.close()
         local main_buf_id = api.nvim_win_get_buf(M.prev_win)
         local main_buf_name = api.nvim_buf_get_name(main_buf_id)
         if main_buf_name == '' then
+            print('scratchpad: main window has no FileName, cannot close scratchpads')
             return
         end
     end
