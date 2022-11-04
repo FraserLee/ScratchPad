@@ -221,6 +221,23 @@ end
 
 -- close all scratchpads on current tab
 function M.close()
+
+    -- there's this thing - possibly a bug, possibly intended behaviour - where
+    -- if the current window doesn't have a FileName (i.e. was probably created
+    -- by another plugin for temporary use, or possibly with :enew), then
+    -- api.nvim_win_close() on an unrelated window will throw up an error. 
+    -- I first check for that here.
+
+    if api.nvim_win_is_valid(M.prev_win) then
+        local main_buf_id = api.nvim_win_get_buf(M.prev_win)
+        local main_buf_name = api.nvim_buf_get_name(main_buf_id)
+        if main_buf_name == '' then
+            return
+        end
+    end
+
+
+
     for _, win_id in ipairs(windows()) do
         if win_id == M.prev_win then api.nvim_set_current_win(M.prev_win) end
         if is_scratchpad(win_id) then
