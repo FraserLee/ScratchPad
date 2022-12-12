@@ -3,7 +3,8 @@
 A snazzy neovim plugin to centre your buffer by creating a persistent
 scratchpad off to the left.
 
-![scratchpad-vid](https://github.com/FraserLee/ScratchPad/blob/main/screenshots/resize.gif)
+![scratchpad-vid](https://github.com/FraserLee/readme_resources/blob/main/resize.gif)
+
 
 <br><br>
 # Installation
@@ -165,5 +166,5 @@ execute "hi ColorColumn ctermbg=" .
 hi! link VirtColumn VertSplit
 ```
 
-![1](https://raw.githubusercontent.com/FraserLee/ScratchPad/main/screenshots/screenshot%201.png)
-![2](https://raw.githubusercontent.com/FraserLee/ScratchPad/main/screenshots/screenshot%202.png)
+![1](https://raw.githubusercontent.com/FraserLee/readme_resources/main/screenshot%201.png)
+![2](https://raw.githubusercontent.com/FraserLee/readme_resources/main/screenshot%202.png)
