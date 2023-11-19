@@ -205,10 +205,10 @@ function M.open()
     -- disable virtual-text colour-column in scratchpad if lukas-reineke/virt-column.nvim is loaded
     local hasVC, VC = pcall(require, 'virt-column')
     if hasVC then
-        VC.buffer_config[api.nvim_get_current_buf()] = {
+        VC.setup_buffer(api.nvim_get_current_buf(), {
             char = ' ',
             virtcolumn = '',
-        }
+        })
     end
 
     if vim.g.scratchpad_autofocus ~= 1 then
